@@ -7,7 +7,7 @@
  ******************************************************************/
 
 // Funciones a implementar.
-
+bool validate_arguments(vector_t *vector, size_t pos);
 
 void vector_destruir(vector_t *vector){
 
@@ -23,15 +23,15 @@ void vector_destruir(vector_t *vector){
 
 bool vector_obtener(vector_t *vector, size_t pos, int *valor){
 
-    if(validate_arguments(vector,pos)==false) return false; 
+    if(!validate_arguments(vector,pos)) return false; 
 	
-	valor = &vector->datos[pos];
+	*valor = vector->datos[pos];
 	return true;
 }
 
 bool vector_guardar(vector_t *vector, size_t pos, int valor){
 
-    if(validate_arguments(vector,pos)==false) return false; 
+    if(!validate_arguments(vector,pos)) return false; 
 
     vector->datos[pos]=valor;
     return true;
@@ -39,13 +39,12 @@ bool vector_guardar(vector_t *vector, size_t pos, int valor){
 
 size_t vector_largo(vector_t *vector){
 	
-	return (vector==NULL)? vector->tam : 0;
+	return (vector==NULL)? 0 : vector->tam;
 }
 
 bool validate_arguments(vector_t *vector, size_t pos){
     //Valida por vector null y posicion erronea
-    return (vector == NULL || pos>vector->tam-1) ? false:true;
-    
+    return (vector==NULL || pos+1>vector->tam )? false:true ;
 }
 
 // Funciones ya implementadas.
