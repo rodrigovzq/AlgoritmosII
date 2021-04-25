@@ -1,10 +1,52 @@
 #include "vector.h"
 
+/*******************************************************************
+ *               		 TP Vector Dinamico                        *
+ *		 Facultad de Ingenieria de la Universidad de Buenos Aires  *
+ *												Vazquez, Rodrigo   *
+ ******************************************************************/
 
 // Funciones a implementar.
 
-// ...
 
+void vector_destruir(vector_t *vector){
+
+	if(vector==NULL) return;
+
+	free(vector->datos); // Borra vector de datos
+	vector->datos=NULL;
+	
+	free(vector);	// Borra estructura
+	vector=NULL;
+	return;
+}
+
+bool vector_obtener(vector_t *vector, size_t pos, int *valor){
+
+    if(validate_arguments(vector,pos)==false) return false; 
+	
+	valor = &vector->datos[pos];
+	return true;
+}
+
+bool vector_guardar(vector_t *vector, size_t pos, int valor){
+
+    if(validate_arguments(vector,pos)==false) return false; 
+
+    vector->datos[pos]=valor;
+    return true;
+}
+
+size_t vector_largo(vector_t *vector){
+	
+	return (vector==NULL)? vector->tam : 0;
+}
+
+bool validate_arguments(vector_t *vector, size_t pos){
+    //Valida por vector null y posicion erronea
+    return (vector == NULL || pos>vector->tam-1) ? false:true;
+    
+}
 
 // Funciones ya implementadas.
 
