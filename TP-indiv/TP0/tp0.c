@@ -49,22 +49,6 @@ int comparar(int vector1[], int n1, int vector2[], int n2) {
     return 0;
 }
 
-/*
-void seleccionuja(int vector[], int n) {
-    
-    for(int i=0;i<n;i++){
-    
-        int s = vector[i];
-        for (int j=i+1; j<n;j++){
-        
-            if(vector[j]<s){
-            
-                swap(&vector[i],&vector[j]);
-            }
-        }
-    
-    }
-}*/
 void seleccion(int vector[], int n) {
     if(n==1) return;
     for(int i=0;i<n;i++){
