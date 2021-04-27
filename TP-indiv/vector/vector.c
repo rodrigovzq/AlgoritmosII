@@ -15,12 +15,14 @@ void vector_destruir(vector_t *vector){
 
 	free(vector->datos); // Borra vector de datos
 	vector->datos=NULL;
+	free(vector);
+	vector=NULL;
 
 }
 
 bool vector_obtener(vector_t *vector, size_t pos, int *valor){
 
-    if(!validate_arguments(vector,pos)) return false; 
+	if(!validate_arguments(vector,pos)) return false; 
 	
 	*valor = vector->datos[pos];
 	return true;
