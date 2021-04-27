@@ -6,11 +6,10 @@
  * *****************************************************************/
 
 void swap(int *x, int *y) {
+    
     int aux = *x;
     *x = *y;
     *y = aux;
-    
-    return ;
 
 }
 
@@ -50,8 +49,8 @@ int comparar(int vector1[], int n1, int vector2[], int n2) {
     return 0;
 }
 
-
-void seleccion(int vector[], int n) {
+/*
+void seleccionuja(int vector[], int n) {
     
     for(int i=0;i<n;i++){
     
@@ -65,4 +64,15 @@ void seleccion(int vector[], int n) {
         }
     
     }
+}*/
+void seleccion(int vector[], int n) {
+    if(n==1) return;
+    for(int i=0;i<n;i++){
+        int min = i;
+        for(int j=i+1;j<n;j++){
+            if(vector[j]<vector[min]) min =j;
+        }
+        swap(&vector[min],&vector[i]);
+    }
+    
 }
