@@ -53,6 +53,17 @@ void seleccion(int vector[], int n) {
     if(n==1) return;
     for(int i=0;i<n;i++){
         int min = i;
+        if(jmax(vector+1+i,n-i)!
+        swap(&vector[min],&vector[i]);
+    }
+    
+}
+
+void seleccion2(int vector[], int n) {
+    if(n==1) return;
+    for(int i=0;i<n;i++){
+    
+        int min = i;
         for(int j=i+1;j<n;j++){
             if(vector[j]<vector[min]) min =j;
         }
