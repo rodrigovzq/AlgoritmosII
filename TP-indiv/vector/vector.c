@@ -14,7 +14,7 @@ void vector_destruir(vector_t *vector){
 	if(vector==NULL) return;
 
 	free(vector->datos); // Borra vector de datos
-	vector->datos=NULL;
+	vector->datos=NULL; // TODO: va esta linea?
 	free(vector);
 
 }
