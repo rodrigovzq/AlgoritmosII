@@ -49,25 +49,12 @@ int comparar(int vector1[], int n1, int vector2[], int n2) {
     return 0;
 }
 
+
 void seleccion(int vector[], int n) {
     if(n==1) return;
-    for(int i=0;i<n;i++){
-        int min = i;
-        if(jmax(vector+1+i,n-i)!
-        swap(&vector[min],&vector[i]);
+    int max=maximo(vector,n--);
+    while(max!=-1){
+        swap(&vector[max],&vector[n]);
+        max=maximo(vector,n--);
     }
-    
-}
-
-void seleccion2(int vector[], int n) {
-    if(n==1) return;
-    for(int i=0;i<n;i++){
-    
-        int min = i;
-        for(int j=i+1;j<n;j++){
-            if(vector[j]<vector[min]) min =j;
-        }
-        swap(&vector[min],&vector[i]);
-    }
-    
 }

@@ -8,5 +8,6 @@ all: compile
 
 compile:
 	$(CC) $(CFLAGS) -o pruebas *.c
+	./pruebas
 clean:
 	rm *.o
