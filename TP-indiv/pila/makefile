@@ -1,4 +1,4 @@
-project = pila
+project = tppila
 execname = pruebas
 CC = gcc
 CFLAGS = -g -std=c99 -Wall -Wconversion -Wtype-limits -pedantic -Werror
@@ -11,5 +11,8 @@ docker:
 	docker run --rm -it $(project)
 compile:
 	$(CC) $(CFLAGS) -o $(execname) *.c
+	./pruebas
 clean:
-	rm *.o
+	docker rmi $(project)
+	rm $(execname)
+	rm -r ./*.dSYM

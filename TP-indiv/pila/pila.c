@@ -45,6 +45,7 @@ void pila_destruir(pila_t *pila){
     free(pila);
 }
 
+
 bool pila_esta_vacia(const pila_t *pila){
     return !(pila->cantidad);
 }
@@ -60,21 +61,15 @@ bool pila_apilar(pila_t *pila, void *valor){
 }
 
 
-// Post: se devolvió el valor del tope de la pila, cuando la pila no está
-// vacía, NULL en caso contrario.
 void * pila_ver_tope(const pila_t *pila){
-    return pila->datos[pila->cantidad];
+
+    return (!pila_esta_vacia(pila))?pila->datos[pila->cantidad-1]:NULL;
 }
 
-// Saca el elemento tope de la pila. Si la pila tiene elementos, se quita el
-// tope de la pila, y se devuelve ese valor. Si la pila está vacía, devuelve
-// NULL.
-// Pre: la pila fue creada.
-// Post: si la pila no estaba vacía, se devuelve el valor del tope anterior
-// y la pila contiene un elemento menos.
+
 void *pila_desapilar(pila_t *pila){
     
-    if(pila->cantidad == 0) return NULL;
+    if(pila_esta_vacia(pila)) return NULL;
 
     size_t lower_bound = pila->capacidad/(STACK_RESIZE_FACTOR*STACK_RESIZE_FACTOR);
     if(pila->cantidad < lower_bound){
@@ -83,6 +78,7 @@ void *pila_desapilar(pila_t *pila){
 
     return pila->datos[-- pila->cantidad]; 
 }
+
 
 bool pila_redimensionar(pila_t *pila,bool up){
     size_t capacidad_nuevo; 
