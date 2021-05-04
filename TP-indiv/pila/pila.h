@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 
-
 /* *****************************************************************
  *                DEFINICION DE LOS TIPOS DE DATOS
  * *****************************************************************/
@@ -11,9 +10,8 @@
 /* Se trata de una pila que contiene datos de tipo void*
  * (punteros genéricos).  La pila en sí está definida en el .c.  */
 
-struct pila;  // Definición completa en pila.c.
+struct pila; // Definición completa en pila.c.
 typedef struct pila pila_t;
-
 
 /* *****************************************************************
  *                    PRIMITIVAS DE LA PILA
@@ -52,7 +50,6 @@ void *pila_ver_tope(const pila_t *pila);
 // y la pila contiene un elemento menos.
 void *pila_desapilar(pila_t *pila);
 
-
 /* *****************************************************************
  *                    PRUEBAS PARA LA PILA
  * *****************************************************************/
@@ -67,4 +64,4 @@ void *pila_desapilar(pila_t *pila);
 // print_test(), como se ha visto en TPs anteriores.
 void pruebas_pila_estudiante(void);
 
-#endif  // _PILA_H
+#endif // _PILA_H
