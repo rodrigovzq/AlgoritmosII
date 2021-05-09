@@ -31,8 +31,6 @@ cola_t *cola_crear(void) //LISTO
 
 void cola_destruir(cola_t *cola, void (*destruir_dato)(void *))
 {
-    if (cola_esta_vacia(cola))
-        return;
     while (cola->primero)
     {
         void *dato = cola_desencolar(cola);
@@ -79,9 +77,10 @@ void *cola_desencolar(cola_t *cola)
 {
     if (cola_esta_vacia(cola))
         return NULL;
-    void *dato = cola->primero->dato;           //rescata dato a devolver
-    nodo_t *nuevo_primero = cola->primero->sig; //en caso de que haya un elemento, asignara NULL;
+    void *dato = cola->primero->dato; //rescata dato a devolver
+    nodo_t *nuevo_primero = cola->primero->sig;
     free(cola->primero);
     cola->primero = nuevo_primero;
+
     return dato;
 }
