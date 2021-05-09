@@ -1,6 +1,7 @@
 #include "cola.h"
 #include "testing.h"
 #include <stdio.h>
+#include "vector.h"
 void pruebas_cola_vacia(void)
 {
     printf("\n>>> Inicio prubeas de cola vacia<<<\n");
@@ -43,13 +44,13 @@ void pruebas_cola_elementos(void)
     cola_destruir(c, NULL);
     printf(">>> Fin de etapa <<<\n");
 }
-void pruebas_cola_volumen(void)
+void pruebas_cola_volumen_estatico(void)
 {
     printf("\n>>>Inicio de pruebas de volumen<<<\n");
     cola_t *c = cola_crear();
     print_test("La cola fue creada:", c != NULL);
 
-    const size_t tam = 27800;
+    const size_t tam = 27182;
     size_t vec[tam];
     for (size_t i = 0; i < tam; i++)
     {
@@ -82,11 +83,63 @@ void pruebas_cola_volumen(void)
     cola_destruir(c, NULL);
     printf(">>> Fin de etapa <<<\n");
 }
+vector_t *crear_vector_prueba(const size_t tam)
+{
+    vector_t *vec = vector_crear(tam);
+    size_t i;
+    for (i = 0; i < tam; i++)
+    {
+        vector_guardar(vec, i, (int)i);
+    }
+    return vec;
+}
+void pruebas_cola_volumen_dinamico()
+{
+    printf("\n>>>Inicio de pruebas de volumen dinamico<<<\n");
+    cola_t *c = cola_crear();
+    print_test("La cola fue creada:", c != NULL);
+    const size_t tam = 35813;
+    vector_t *vec = crear_vector_prueba(tam);
+
+    // Encolar
+    bool ok = true;
+    int valor;
+    for (size_t i = 0; i < tam; i++)
+    {
+        vector_obtener(vec, i, &valor);
+        ok &= cola_encolar(c, &valor);
+    }
+    print_test("Se pudieron guardar todos los elementos", ok);
+    // Desencolar
+    int *v;
+    size_t *primero;
+    bool ok_primero = true;
+    for (size_t i = 0; i < tam; i++)
+    {
+        v = cola_desencolar(c);
+        vector_obtener(vec, i, &valor);
+        ok &= valor == *v;
+        primero = cola_ver_primero(c);
+        if (primero != NULL)
+        {
+            vector_obtener(vec, i + 2, &valor);
+            ok_primero &= (int)*primero == valor;
+        }
+    }
+    print_test("Se desencolaron todos los elementos", cola_esta_vacia(c));
+    print_test("Todos los elementos desencolados fueron correctos", ok_primero);
+    print_test("Se conservo la invariante de cola", ok);
+
+    cola_destruir(c, free);
+    vector_destruir(vec);
+    printf(">>> Fin de etapa <<<\n");
+}
 void pruebas_cola_estudiante(void)
 {
     pruebas_cola_vacia();
     pruebas_cola_elementos();
-    pruebas_cola_volumen();
+    pruebas_cola_volumen_estatico();
+    pruebas_cola_volumen_dinamico();
 
     return;
 }
