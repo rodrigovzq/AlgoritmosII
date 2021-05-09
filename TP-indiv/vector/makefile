@@ -12,4 +12,6 @@ docker:
 compile:
 	$(CC) $(CFLAGS) -o $(execname) *.c
 clean:
-	rm *.o
+	rm $(execname)
+	rm -r ./*.dSYM
+	docker rmi $(project)
