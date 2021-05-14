@@ -134,12 +134,40 @@ void pruebas_cola_volumen_dinamico()
     vector_destruir(vec);
     printf(">>> Fin de etapa <<<\n");
 }
+void pruebas_cola_destruccion()
+{
+    printf("\n>>>Inicio de pruebas de volumen: destruccion con elementos dentro<<<\n");
+    cola_t *cola = cola_crear();
+    size_t tam = 100;
+    int **vec = malloc(tam * sizeof(int *));
+    print_test("La cola fue creada:", cola != NULL);
+    for (size_t i = 0; i < tam; i++)
+    {
+        vec[i] = malloc(sizeof(int));
+        *vec[i] = 5;
+    }
+    // Encolar
+    bool ok = true;
+    for (size_t i = 0; i < tam; i++)
+    {
+        ok &= cola_encolar(cola, vec[i]);
+    }
+
+    print_test("Se pudieron guardar todos los elementos", ok);
+
+    cola_destruir(cola, free);
+    print_test("Se destruyo cola con elementos adentro", cola_esta_vacia(cola));
+    free(vec);
+    printf(">>> Fin de etapa <<<\n");
+}
+
 void pruebas_cola_estudiante(void)
 {
     pruebas_cola_vacia();
     pruebas_cola_elementos();
     pruebas_cola_volumen_estatico();
     pruebas_cola_volumen_dinamico();
+    pruebas_cola_destruccion();
 
     return;
 }

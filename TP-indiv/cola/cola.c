@@ -34,9 +34,9 @@ void cola_destruir(cola_t *cola, void (*destruir_dato)(void *))
     while (cola->primero)
     {
         void *dato = cola_desencolar(cola);
-        if (*destruir_dato)
+        if (destruir_dato)
         {
-            (*destruir_dato)(dato);
+            destruir_dato(dato);
         }
     }
     free(cola);
