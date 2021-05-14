@@ -156,7 +156,6 @@ void pruebas_cola_destruccion()
     print_test("Se pudieron guardar todos los elementos", ok);
 
     cola_destruir(cola, free);
-    print_test("Se destruyo cola con elementos adentro", cola_esta_vacia(cola));
     free(vec);
     printf(">>> Fin de etapa <<<\n");
 }
