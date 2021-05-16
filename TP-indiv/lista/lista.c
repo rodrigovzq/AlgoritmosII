@@ -6,16 +6,28 @@
  *												Vazquez, Rodrigo   *
  ******************************************************************/
 #include <stdlib.h>
+#include <stdbool.h>
 
 /* *****************************************************************
  *                         TDA LISTA
  * *****************************************************************/
-typedef struct lista
+struct lista
 {
     nodo_t *primero;
     nodo_t *ultimo;
     size_t largo;
-} lista_t;
+};
+
+/* *****************************************************************
+ *                       TDA ITERADOR EXTERNO
+ * *****************************************************************/
+
+struct lista_iter
+{
+    lista_t *lista;
+    nodo_t *actual;
+    nodo_t *anterior;
+};
 
 /* *****************************************************************
  *                    PRIMITIVAS LISTA
@@ -36,7 +48,7 @@ lista_t *lista_crear(void)
 
 bool lista_esta_vacia(const lista_t *lista)
 {
-    return lista->largo == 0;
+    return lista_largo(lista) == 0;
 }
 
 bool lista_insertar_primero(lista_t *lista, void *dato)
@@ -44,7 +56,11 @@ bool lista_insertar_primero(lista_t *lista, void *dato)
     nodo_t *nuevo_primero = nodo_crear(dato);
     if (nuevo_primero == NULL)
         return false;
-    if (!nodo_enlazar(nuevo_primero, lista->primero))
+    if (lista_esta_vacia(lista))
+    {
+        lista->ultimo = nuevo_primero;
+    }
+    else if (!nodo_enlazar(nuevo_primero, lista->primero))
     {
         nodo_destruir(nuevo_primero);
         return false;
@@ -59,7 +75,11 @@ bool lista_insertar_ultimo(lista_t *lista, void *dato)
     nodo_t *nuevo_ultimo = nodo_crear(dato);
     if (nuevo_ultimo == NULL)
         return false;
-    if (!nodo_enlazar(lista->ultimo, nuevo_ultimo))
+    if (lista_esta_vacia(lista))
+    {
+        lista->primero = nuevo_ultimo;
+    }
+    else if (!nodo_enlazar(lista->ultimo, nuevo_ultimo))
     {
         nodo_destruir(nuevo_ultimo);
         return false;
@@ -71,14 +91,19 @@ bool lista_insertar_ultimo(lista_t *lista, void *dato)
 
 void *lista_borrar_primero(lista_t *lista)
 {
+    if (lista_esta_vacia(lista))
+        return NULL;
     nodo_t *nuevo_primero = nodo_proximo(lista->primero);
+    void *dato = nodo_ver_dato(lista->primero);
     nodo_destruir(lista->primero);
     lista->primero = nuevo_primero;
+    lista->largo--;
+    return dato;
 }
 
 void *lista_ver_primero(const lista_t *lista)
 {
-    return nodo_ver_dato(lista->primero);
+    return (!lista_esta_vacia(lista)) ? nodo_ver_dato(lista->primero) : NULL;
 }
 
 void *lista_ver_ultimo(const lista_t *lista)
@@ -93,7 +118,7 @@ size_t lista_largo(const lista_t *lista)
 
 void lista_destruir(lista_t *lista, void (*destruir_dato)(void *))
 {
-    while (lista->primero)
+    while (!lista_esta_vacia(lista))
     {
         void *dato = lista_ver_primero(lista);
         if (destruir_dato)
@@ -102,16 +127,7 @@ void lista_destruir(lista_t *lista, void (*destruir_dato)(void *))
     }
     free(lista);
 }
-/* *****************************************************************
- *                         TDA ITERADOR
- * *****************************************************************/
 
-typedef struct lista_iter
-{
-    lista_t *lista;
-    nodo_t *actual;
-    nodo_t *anterior;
-} lista_iter_t;
 /* *****************************************************************
  *                  PRIMITIVAS ITERADOR EXTERNO
  * *****************************************************************/
@@ -176,7 +192,7 @@ void *lista_iter_borrar(lista_iter_t *iter)
     if (suprimido == NULL)
         return NULL;
 
-    nodo_enlazar(iter->anterior, nodo_ver_proximo(iter->actual));
+    nodo_enlazar(iter->anterior, nodo_proximo(iter->actual));
     iter->lista->largo--;
     void *dato = nodo_ver_dato(suprimido);
     nodo_destruir(suprimido);

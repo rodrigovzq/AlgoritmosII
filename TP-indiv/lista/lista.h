@@ -1,6 +1,6 @@
 #ifndef _LISTA_H
 #define _LISTA_H
-
+#include <stdlib.h>
 #include <stdbool.h>
 /* *****************************************************************
  *                DEFINICION DE LOS TIPOS DE DATOS
@@ -27,7 +27,7 @@ bool lista_insertar_primero(lista_t *lista, void *dato);
 // Pre: la lista fue creada.
 // Post: un nodo se agrego al final de la lista.
 bool lista_insertar_ultimo(lista_t *lista, void *dato);
-// Elimina el primer elemento de la lista.
+// Devuelve y elimina el primer elemento de la lista.
 // Pre: la lista fue creada.
 // Post: un nodo se elimino del principio de la lista.
 void *lista_borrar_primero(lista_t *lista);
