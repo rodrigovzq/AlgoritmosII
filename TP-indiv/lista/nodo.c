@@ -1,5 +1,6 @@
 #include "nodo.h"
 #include <stdlib.h>
+
 /* *****************************************************************
  *                        TDA NODO
  * *****************************************************************/
@@ -36,7 +37,8 @@ void *nodo_ver_dato(nodo_t *nodo)
 
 nodo_t *nodo_proximo(nodo_t *nodo)
 {
-    return nodo->prox;
+
+    return (nodo != NULL) ? nodo->prox : NULL;
 }
 
 bool nodo_enlazar(nodo_t *nodo_anterior, nodo_t *nodo_siguiente)

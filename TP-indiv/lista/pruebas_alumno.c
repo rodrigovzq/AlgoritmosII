@@ -159,10 +159,8 @@ void pruebas_lista_volumen_dinamico(void)
 
     printf(">>> Fin de etapa <<<\n");
 }
-void pruebas_lista_iterador_externo(void)
+void iterador_pruebas_aisladas(void)
 {
-    printf("\n>>>Inicio de pruebas de iterador externo<<<\n");
-
     lista_t *lista = lista_crear();
     print_test("Lista fue creada:", lista != NULL);
     lista_iter_t *iter = lista_iter_crear(lista);
@@ -176,7 +174,7 @@ void pruebas_lista_iterador_externo(void)
     print_test("El largo de la lista es 1", lista_largo(lista) == 1);
 
     //- Insertar un elemento cuando el iterador está al final efectivamente es equivalente a insertar al final.
-    lista_iter_avanzar(iter);
+    print_test("Avanzar es true", lista_iter_avanzar(iter));
     print_test("Iterador al final", lista_iter_al_final(iter));
     print_test("Se inserto un 8 correctamente", lista_iter_insertar(iter, &vec[1]));
     print_test("El largo de la lista es 2", lista_largo(lista) == 2);
@@ -215,37 +213,59 @@ void pruebas_lista_iterador_externo(void)
     lista_iter_destruir(iter);
     lista_iter_destruir(itera2);
     lista_destruir(lista, NULL);
+}
+void pruebas_lista_iterador_externo(void)
+{
+    printf("\n>>>Inicio de pruebas de iterador externo<<<\n");
+
+    iterador_pruebas_aisladas();
 
     //Pruebas de recorrido
-    lista = lista_crear();
+    lista_t *lista = lista_crear();
     print_test("Lista fue creada:", lista != NULL);
-    iter = lista_iter_crear(lista);
+    lista_iter_t *iter = lista_iter_crear(lista);
     print_test("El iterador fue creado:", iter != NULL);
 
-    const size_t tam = 27182;
+    const size_t tam = 30;
     size_t vec2[tam];
     bool ok_insertar = true;
     bool ok_largo = true;
-
+    bool ok_elemento = true;
     for (size_t i = 0; i < tam; i++)
     {
+
         vec2[i] = tam - i;
         ok_insertar &= lista_iter_insertar(iter, &vec2[i]);
         ok_largo &= lista_largo(lista) == i + 1;
+        ok_elemento &= vec2[i] == *(size_t *)lista_iter_ver_actual(iter);
+        //printf("i: %zu, largo: %zu\n", i, lista_largo(lista));
+        //printf("insertado %zu actual %zu\n", vec2[i], *(size_t *)lista_iter_ver_actual(iter));
     }
     print_test("Se insertaron todos los elementos de manera correcta", ok_insertar);
-    print_test("El largo de la lista se actualizo correctamente", ok_largo);
-    bool ok_avanzar = true;
-    while (!lista_iter_al_final(iter))
-    {
+    print_test("El actual verifica lo insertado", ok_elemento);
+    print_test("El largo de la lista se actualizo correctamentea al llenar", ok_largo);
+    // crea otro iterador para recorrer
+    lista_iter_t *iter2 = lista_iter_crear(lista);
+    print_test("Otro iterador fue creado:", iter2 != NULL);
+    print_test("El iterador no esta al final", !lista_iter_al_final(iter2));
+    print_test("Avanzar es true", lista_iter_avanzar(iter2));
 
-        ok_avanzar &= lista_iter_avanzar(iter);
+    //borrado
+    bool ok_actual = true;
+    for (size_t i = 0; i < tam - 1; i++)
+    {
+        ok_largo &= lista_largo(lista) == tam - i;
+        ok_elemento &= *(size_t *)lista_iter_borrar(iter) == vec2[tam - i - 1];
+        ok_actual &= *(size_t *)lista_iter_ver_actual(iter) == vec2[tam - i - 2];
     }
-    print_test("El iterador recorre correctamente", ok_avanzar);
-    print_test("El iterador esta al final de la lista", lista_iter_al_final(iter));
+    ok_largo &= lista_largo(lista) == 1;
+    ok_elemento &= *(size_t *)lista_iter_borrar(iter) == vec2[0];
+    print_test("El largo de la lista se actualizo correctamente al vaciar", ok_largo);
+    print_test("Los elementos se borraron correctamente", ok_elemento);
 
     //Destruccion
     lista_iter_destruir(iter);
+    lista_iter_destruir(iter2);
     lista_destruir(lista, NULL);
     printf(">>> Fin de etapa <<<\n");
 }
@@ -301,6 +321,7 @@ void pruebas_lista_estudiante(void)
     pruebas_lista_elementos();
     pruebas_lista_volumen_estatico();
     pruebas_lista_volumen_dinamico();
+
     pruebas_lista_iterador_externo();
     pruebas_lista_iterador_interno();
 

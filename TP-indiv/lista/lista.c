@@ -7,7 +7,6 @@
  ******************************************************************/
 #include <stdlib.h>
 #include <stdbool.h>
-#include <stdio.h>
 /* *****************************************************************
  *                         TDA LISTA
  * *****************************************************************/
@@ -108,7 +107,7 @@ void *lista_ver_primero(const lista_t *lista)
 
 void *lista_ver_ultimo(const lista_t *lista)
 {
-    return nodo_ver_dato(lista->ultimo);
+    return (!lista_esta_vacia(lista)) ? nodo_ver_dato(lista->ultimo) : NULL;
 }
 
 size_t lista_largo(const lista_t *lista)
@@ -159,7 +158,7 @@ bool lista_iter_avanzar(lista_iter_t *iter)
 
 void *lista_iter_ver_actual(const lista_iter_t *iter)
 {
-    return (iter->actual) ? nodo_ver_dato(iter->actual) : NULL;
+    return (!lista_esta_vacia(iter->lista)) ? nodo_ver_dato(iter->actual) : NULL;
 }
 
 bool lista_iter_al_final(const lista_iter_t *iter)
@@ -203,24 +202,35 @@ bool lista_iter_insertar(lista_iter_t *iter, void *dato)
 
 void *lista_iter_borrar(lista_iter_t *iter)
 {
-    nodo_t *suprimido = iter->actual;
-    if (suprimido == NULL)
-        return NULL;
 
-    if (iter->anterior != NULL) //iterador no al principio
+    if (lista_esta_vacia(iter->lista))
+        return NULL;
+    if (lista_iter_al_final(iter))
     {
-        nodo_enlazar(iter->anterior, nodo_proximo(iter->actual));
+        return NULL;
+    }
+    nodo_t *supr = iter->actual;
+
+    if (lista_largo(iter->lista) == 1)
+    {
+
+        iter->lista->primero = NULL;
+        iter->lista->ultimo = NULL;
+    }
+    else if (iter->anterior == NULL) // iterador al principio y el actual no es null
+    {
+        iter->lista->primero = nodo_proximo(supr);
     }
     else
     {
-        iter->lista->primero = nodo_proximo(iter->actual);
+        nodo_enlazar(iter->anterior, nodo_proximo(supr));
     }
+    void *dato = nodo_ver_dato(supr);
     iter->actual = nodo_proximo(iter->actual);
-
-    void *dato = nodo_ver_dato(suprimido);
-    nodo_destruir(suprimido);
-
+    nodo_destruir(supr);
     iter->lista->largo--;
+    if (lista_iter_al_final(iter))
+        iter->lista->ultimo = iter->anterior;
     return dato;
 }
 
