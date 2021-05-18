@@ -31,7 +31,7 @@ void nodo_destruir(nodo_t *nodo)
 
 void *nodo_ver_dato(nodo_t *nodo)
 {
-    return nodo->dato;
+    return (nodo != NULL) ? nodo->dato : NULL;
 }
 
 nodo_t *nodo_proximo(nodo_t *nodo)
@@ -41,7 +41,7 @@ nodo_t *nodo_proximo(nodo_t *nodo)
 
 bool nodo_enlazar(nodo_t *nodo_anterior, nodo_t *nodo_siguiente)
 {
-    if (nodo_anterior == NULL || nodo_siguiente == NULL)
+    if (nodo_anterior == NULL)
         return false;
     nodo_anterior->prox = nodo_siguiente;
     return true;
@@ -49,5 +49,5 @@ bool nodo_enlazar(nodo_t *nodo_anterior, nodo_t *nodo_siguiente)
 
 bool nodo_al_final(nodo_t *nodo)
 {
-    return !nodo->prox;
+    return nodo == NULL;
 }
