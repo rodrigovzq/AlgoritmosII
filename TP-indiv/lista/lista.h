@@ -96,9 +96,6 @@ nodo_t *nodo_crear(void *dato);
 // Pre: Nodo fue creado
 // Post: Nodo eliminado
 void nodo_destruir(nodo_t *nodo);
-// Devuelve puntero al dato del nodo argumento
-// Pre: Nodo fue creado
-void *nodo_ver_dato(nodo_t *nodo);
 // Devuelve puntero al siguiente nodo del argumento.
 // Pre: Nodo fue creado
 nodo_t *nodo_proximo(nodo_t *nodo);
