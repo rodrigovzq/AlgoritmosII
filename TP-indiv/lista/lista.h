@@ -80,30 +80,8 @@ void *lista_iter_borrar(lista_iter_t *iter);
  *                 PRIMITIVAS DEL ITERADOR INTERNO
  * *****************************************************************/
 
-// TODO: Documentacion iterador interno
+// Recorre la lista y aplica la funcion visitar
+// Pre: lista fue creada
 void lista_iterar(lista_t *lista, bool visitar(void *dato, void *extra), void *extra);
-
-typedef struct nodo nodo_t;
-
-/* *****************************************************************
- *                    Funciones NODO
- * *****************************************************************/
-
-// Crea nodo
-// Post: Nodo creado con dato guardado y posicion proxima en NULL. Devuelve NULL en caso de falla.
-nodo_t *nodo_crear(void *dato);
-// Elimina el nodo
-// Pre: Nodo fue creado
-// Post: Nodo eliminado
-void nodo_destruir(nodo_t *nodo);
-// Devuelve puntero al siguiente nodo del argumento.
-// Pre: Nodo fue creado
-nodo_t *nodo_proximo(nodo_t *nodo);
-//Enlaza unidireccionalmente los nodos, en el orden de los argumentos.
-// Post el primer nodo ahora tiene un puntero al siguiente en su campo prox
-bool nodo_enlazar(nodo_t *nodo_anterior, nodo_t *nodo_siguiente);
-// Verifica que si el nodo esta al final de la lista.
-// Pre: el nodo fue creado.
-bool nodo_al_final(nodo_t *nodo);
 
 #endif

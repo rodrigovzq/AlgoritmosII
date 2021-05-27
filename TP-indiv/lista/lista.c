@@ -6,6 +6,12 @@
  ******************************************************************/
 #include <stdlib.h>
 #include <stdbool.h>
+
+typedef struct nodo
+{
+    void *dato;
+    struct nodo *prox;
+} nodo_t;
 /* *****************************************************************
  *                         TDA LISTA
  * *****************************************************************/
@@ -14,11 +20,6 @@ struct lista
     nodo_t *primero;
     nodo_t *ultimo;
     size_t largo;
-};
-struct nodo
-{
-    void *dato;
-    struct nodo *prox;
 };
 
 /* *****************************************************************
@@ -32,6 +33,45 @@ struct lista_iter
     nodo_t *anterior;
 };
 
+/* *****************************************************************
+ *                    Funciones NODO
+ * *****************************************************************/
+
+nodo_t *nodo_crear(void *dato)
+{
+    nodo_t *nodo = malloc(sizeof(nodo_t));
+
+    if (nodo == NULL)
+        return NULL;
+
+    nodo->dato = dato;
+    nodo->prox = NULL;
+    return nodo;
+}
+
+void nodo_destruir(nodo_t *nodo)
+{
+    free(nodo);
+}
+
+nodo_t *nodo_proximo(nodo_t *nodo)
+{
+
+    return (nodo != NULL) ? nodo->prox : NULL;
+}
+
+bool nodo_enlazar(nodo_t *nodo_anterior, nodo_t *nodo_siguiente)
+{
+    if (nodo_anterior == NULL)
+        return false;
+    nodo_anterior->prox = nodo_siguiente;
+    return true;
+}
+
+bool nodo_al_final(nodo_t *nodo)
+{
+    return nodo == NULL;
+}
 /* *****************************************************************
  *                    PRIMITIVAS LISTA
  * *****************************************************************/
@@ -250,44 +290,4 @@ void lista_iterar(lista_t *lista, bool visitar(void *dato, void *extra), void *e
         sigue = visitar(item->dato, extra);
         item = nodo_proximo(item);
     }
-}
-/* *****************************************************************
- *                    Funciones NODO
- * *****************************************************************/
-
-nodo_t *nodo_crear(void *dato)
-{
-    nodo_t *nodo = malloc(sizeof(nodo_t));
-
-    if (nodo == NULL)
-        return NULL;
-
-    nodo->dato = dato;
-    nodo->prox = NULL;
-    return nodo;
-}
-
-void nodo_destruir(nodo_t *nodo)
-{
-    free(nodo);
-}
-
-
-nodo_t *nodo_proximo(nodo_t *nodo)
-{
-
-    return (nodo != NULL) ? nodo->prox : NULL;
-}
-
-bool nodo_enlazar(nodo_t *nodo_anterior, nodo_t *nodo_siguiente)
-{
-    if (nodo_anterior == NULL)
-        return false;
-    nodo_anterior->prox = nodo_siguiente;
-    return true;
-}
-
-bool nodo_al_final(nodo_t *nodo)
-{
-    return nodo == NULL;
 }
