@@ -269,16 +269,13 @@ void pruebas_lista_iterador_externo(void)
     lista_destruir(lista, NULL);
     printf(">>> Fin de etapa <<<\n");
 }
-bool ver_elemento_sin_corte(void *dato, void *extra)
-{
-    printf("%zu\n", *(size_t *)dato);
-    return true;
-}
-bool ver_elemento_con_corte(void *dato, void *corte)
+
+bool inc_elemento(void *dato, void *corte)
 {
     if (*(size_t *)corte > 0)
     {
-        printf("%zu:\t%zu\n", (*(size_t *)corte)--, *(size_t *)dato);
+        (*(size_t *)dato)++;
+        (*(size_t *)corte)--;
 
         return true;
     }
@@ -305,11 +302,22 @@ void pruebas_lista_iterador_interno(void)
     }
 
     print_test("Se pudieron insertar todos los elementos al final exitosamente", ok);
-    size_t corte = 5;
 
-    lista_iterar(lista, ver_elemento_sin_corte, NULL);
-    lista_iterar(lista, ver_elemento_con_corte, &corte);
+    size_t corte = 5;
+    lista_iterar(lista, inc_elemento, &corte);
+
+    lista_iter_t *iter2 = lista_iter_crear(lista);
+    corte = 5;
+    size_t valor = 28;
+    for (size_t i = 0; i < corte; i++)
+    {
+        ok &= *(size_t *)lista_iter_ver_actual(iter2) == valor--;
+        lista_iter_avanzar(iter2);
+    }
+    print_test("El iterador modifico los elementos exitosamente", ok);
+
     //Destruccion
+    lista_iter_destruir(iter2);
     lista_iter_destruir(iter);
     lista_destruir(lista, NULL);
     printf(">>> Fin de etapa <<<\n");

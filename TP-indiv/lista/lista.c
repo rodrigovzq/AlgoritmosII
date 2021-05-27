@@ -1,5 +1,4 @@
 #include "lista.h"
-#include "nodo.h"
 /*******************************************************************
  *               		     TP Lista                              *
  *		 Facultad de Ingenieria de la Universidad de Buenos Aires  *
@@ -15,6 +14,11 @@ struct lista
     nodo_t *primero;
     nodo_t *ultimo;
     size_t largo;
+};
+struct nodo
+{
+    void *dato;
+    struct nodo *prox;
 };
 
 /* *****************************************************************
@@ -59,10 +63,9 @@ bool lista_insertar_primero(lista_t *lista, void *dato)
     {
         lista->ultimo = nuevo_primero;
     }
-    else if (!nodo_enlazar(nuevo_primero, lista->primero))
+    else
     {
-        nodo_destruir(nuevo_primero);
-        return false;
+        nodo_enlazar(nuevo_primero, lista->primero);
     }
     lista->primero = nuevo_primero;
     lista->largo++;
@@ -78,10 +81,9 @@ bool lista_insertar_ultimo(lista_t *lista, void *dato)
     {
         lista->primero = nuevo_ultimo;
     }
-    else if (!nodo_enlazar(lista->ultimo, nuevo_ultimo))
+    else
     {
-        nodo_destruir(nuevo_ultimo);
-        return false;
+        nodo_enlazar(lista->ultimo, nuevo_ultimo);
     }
     lista->ultimo = nuevo_ultimo;
     lista->largo++;
@@ -96,18 +98,20 @@ void *lista_borrar_primero(lista_t *lista)
     void *dato = nodo_ver_dato(lista->primero);
     nodo_destruir(lista->primero);
     lista->primero = nuevo_primero;
+    if (lista_esta_vacia(lista))
+        lista->ultimo = NULL;
     lista->largo--;
     return dato;
 }
 
 void *lista_ver_primero(const lista_t *lista)
 {
-    return (!lista_esta_vacia(lista)) ? nodo_ver_dato(lista->primero) : NULL;
+    return (!lista_esta_vacia(lista)) ? lista->primero->dato : NULL;
 }
 
 void *lista_ver_ultimo(const lista_t *lista)
 {
-    return (!lista_esta_vacia(lista)) ? nodo_ver_dato(lista->ultimo) : NULL;
+    return (!lista_esta_vacia(lista)) ? lista->ultimo->dato : NULL;
 }
 
 size_t lista_largo(const lista_t *lista)
@@ -205,10 +209,7 @@ void *lista_iter_borrar(lista_iter_t *iter)
 
     if (lista_esta_vacia(iter->lista))
         return NULL;
-    if (lista_iter_al_final(iter))
-    {
-        return NULL;
-    }
+
     nodo_t *supr = iter->actual;
 
     if (lista_largo(iter->lista) == 1)
@@ -249,4 +250,48 @@ void lista_iterar(lista_t *lista, bool visitar(void *dato, void *extra), void *e
         sigue = visitar(nodo_ver_dato(item), extra);
         item = nodo_proximo(item);
     }
+}
+/* *****************************************************************
+ *                    Funciones NODO
+ * *****************************************************************/
+
+nodo_t *nodo_crear(void *dato)
+{
+    nodo_t *nodo = malloc(sizeof(nodo_t));
+
+    if (nodo == NULL)
+        return NULL;
+
+    nodo->dato = dato;
+    nodo->prox = NULL;
+    return nodo;
+}
+
+void nodo_destruir(nodo_t *nodo)
+{
+    free(nodo);
+}
+
+void *nodo_ver_dato(nodo_t *nodo)
+{
+    return (nodo != NULL) ? nodo->dato : NULL;
+}
+
+nodo_t *nodo_proximo(nodo_t *nodo)
+{
+
+    return (nodo != NULL) ? nodo->prox : NULL;
+}
+
+bool nodo_enlazar(nodo_t *nodo_anterior, nodo_t *nodo_siguiente)
+{
+    if (nodo_anterior == NULL)
+        return false;
+    nodo_anterior->prox = nodo_siguiente;
+    return true;
+}
+
+bool nodo_al_final(nodo_t *nodo)
+{
+    return nodo == NULL;
 }
