@@ -15,6 +15,8 @@ compile:
 	$(CC) $(CFLAGS) -o $(execname) *.c
 	./pruebas
 clean:
-	docker rmi $(project)
-	rm $(execname)
-	rm -r ./*.dSYM
+	
+	-docker rmi $(project)
+	-rm $(execname)
+	-rm *.zip
+	-rm -r ./*.dSYM
