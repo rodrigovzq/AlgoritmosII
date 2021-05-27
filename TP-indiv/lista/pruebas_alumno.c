@@ -238,8 +238,6 @@ void pruebas_lista_iterador_externo(void)
         ok_insertar &= lista_iter_insertar(iter, &vec2[i]);
         ok_largo &= lista_largo(lista) == i + 1;
         ok_elemento &= vec2[i] == *(size_t *)lista_iter_ver_actual(iter);
-        //printf("i: %zu, largo: %zu\n", i, lista_largo(lista));
-        //printf("insertado %zu actual %zu\n", vec2[i], *(size_t *)lista_iter_ver_actual(iter));
     }
     print_test("Se insertaron todos los elementos de manera correcta", ok_insertar);
     print_test("El actual verifica lo insertado", ok_elemento);
@@ -260,6 +258,10 @@ void pruebas_lista_iterador_externo(void)
     }
     ok_largo &= lista_largo(lista) == 1;
     ok_elemento &= *(size_t *)lista_iter_borrar(iter) == vec2[0];
+
+    print_test("El iterador esta al final de la lista", lista_iter_al_final(iter));
+    print_test("Ver actual es NULL", lista_iter_ver_actual(iter) == NULL);
+    print_test("Avanzar es falso", lista_iter_avanzar(iter) == false);
     print_test("El largo de la lista se actualizo correctamente al vaciar", ok_largo);
     print_test("Los elementos se borraron correctamente", ok_elemento);
 
@@ -324,12 +326,12 @@ void pruebas_lista_iterador_interno(void)
 }
 void pruebas_lista_estudiante(void)
 {
-
+    /*
     pruebas_lista_vacia();
     pruebas_lista_elementos();
     pruebas_lista_volumen_estatico();
     pruebas_lista_volumen_dinamico();
-
+*/
     pruebas_lista_iterador_externo();
     pruebas_lista_iterador_interno();
 

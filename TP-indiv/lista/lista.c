@@ -202,7 +202,10 @@ bool lista_iter_avanzar(lista_iter_t *iter)
 
 void *lista_iter_ver_actual(const lista_iter_t *iter)
 {
-    return (!lista_esta_vacia(iter->lista)) ? iter->actual->dato : NULL;
+    if (lista_iter_al_final(iter) || iter->actual == NULL)
+        return NULL;
+
+    return iter->actual->dato;
 }
 
 bool lista_iter_al_final(const lista_iter_t *iter)
@@ -247,7 +250,7 @@ bool lista_iter_insertar(lista_iter_t *iter, void *dato)
 void *lista_iter_borrar(lista_iter_t *iter)
 {
 
-    if (lista_esta_vacia(iter->lista))
+    if (lista_iter_al_final(iter))
         return NULL;
 
     nodo_t *supr = iter->actual;
