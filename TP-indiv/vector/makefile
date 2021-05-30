@@ -1,7 +1,7 @@
 project = tpvector
 execname = pruebas
 CC = gcc
-CFLAGS = -g -std=c99 -Wall -Wconversion -Wtype-limits -pedantic -Werror
+CFLAGS = -g -std=c99 -Wall -Wconversion -Wtype-limits -pedantic -Werror 
 
 
 all: compile
@@ -9,9 +9,14 @@ all: compile
 docker:
 	docker build -t $(project) .
 	docker run --rm -it $(project)
+memcheck: compile
+	leaks -atExit -- ./$(execname)	 | grep LEAK: 
 compile:
 	$(CC) $(CFLAGS) -o $(execname) *.c
+	./pruebas
 clean:
-	rm $(execname)
-	rm -r ./*.dSYM
-	docker rmi $(project)
+	
+	-docker rmi $(project)
+	-rm $(execname)
+	-rm *.zip
+	-rm -r ./*.dSYM
