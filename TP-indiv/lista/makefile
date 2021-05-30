@@ -1,4 +1,4 @@
-project = tpcola
+project = tplista
 execname = pruebas
 CC = gcc
 CFLAGS = -g -std=c99 -Wall -Wconversion -Wtype-limits -pedantic -Werror 
