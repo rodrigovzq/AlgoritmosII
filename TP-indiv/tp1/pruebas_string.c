@@ -48,9 +48,9 @@ void pruebas_split(void)
     free_strv(splitted);
 
     print_test("caso 7", true);
-    splitted = split(",", ',');
+    splitted = split("", ',');
 
-    for (size_t i = 0; i < 2; i++)
+    for (size_t i = 0; i < 1; i++)
     {
         printf(">> %s\n", splitted[i]);
     }
@@ -81,7 +81,7 @@ void pruebas_join(void)
 void pruebas_string_estudiante(void)
 {
     pruebas_split();
-    //pruebas_join();
+    pruebas_join();
 
     return;
 }

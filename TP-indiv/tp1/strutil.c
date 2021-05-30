@@ -7,7 +7,7 @@
 
 char *substr(const char *str, size_t n)
 {
-    char *substr = malloc(sizeof(char *));
+    char *substr = malloc(sizeof(char *) * (n + 1));
 
     if (substr == NULL)
         return NULL;
@@ -23,25 +23,22 @@ char **split(const char *str, char sep)
 {
     size_t f = 0, i = 0;
     size_t strcount = 0;
-    char *aux[strlen(str)];
+    char **spltstr = malloc((strlen(str) + 2) * sizeof(char *));
+
     while (str[f] != EOS)
     {
         if (str[f] == sep)
         {
-            aux[strcount++] = substr(str + i, f - i);
+            spltstr[strcount++] = substr(str + i, f - i);
             i = ++f;
         }
         else
             f++;
     }
-    printf("i=%zu\n", i);
-    aux[strcount++] = substr(str + i, f - i);
-    printf("cantidad de palabras luego de split %zu \n", strcount);
-    char **spltstr = malloc(strcount * sizeof(char *) + 1);
-    for (i = 0; i < strcount; i++)
-    {
-        spltstr[i] = aux[i];
-    }
+    //printf("i=%zu\n", i);
+    spltstr[strcount++] = substr(str + i, f - i);
+    spltstr[strcount] = NULL;
+    //printf("cantidad de palabras luego de split %zu \n", strcount);
 
     return spltstr;
 }
@@ -76,12 +73,16 @@ char *join(char **strv, char sep)
 }
 void free_strv(char *strv[])
 {
-
+    //printf("free %p\n", (void *)strv);
     for (size_t i = 0; strv[i] != NULL; i++)
     {
-        printf("liberando %s\n", strv[i]);
+        //printf("liberando %s en %p\n", strv[i], (void *)strv[i]);
         free(strv[i]);
     }
-    printf("libero puntero\n");
+    //printf("ok\n");
+
+    //printf("libero puntero\n");
     free(strv);
 }
+
+// TODO: borrar comentarios
