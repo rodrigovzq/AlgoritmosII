@@ -13,7 +13,7 @@ memcheck: compile
 	leaks -atExit -- ./$(execname)	 | grep LEAK: 
 compile:
 	$(CC) $(CFLAGS) -o $(execname) *.c
-	./pruebas
+	./pruebas < rpn.txt
 clean:
 	
 	-docker rmi $(project)

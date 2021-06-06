@@ -49,7 +49,6 @@ void lista_destruir(lista_t *lista, void (*destruir_dato)(void *));
  *                 PRIMITIVAS DEL ITERADOR EXTERNO
  * *****************************************************************/
 
-// TODO: Documentacion iterador externo
 // Crea iterador.
 // Post: devuelve puntero a iterador o NULL en caso de no poder crearse
 lista_iter_t *lista_iter_crear(lista_t *lista);

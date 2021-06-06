@@ -48,7 +48,6 @@
 char **dc_split(const char *linea);
 char **infix_split(const char *linea);
 
-
 /*
  * Una vez hemos dividido la línea en palabras, lo siguiente que necesitamos es
  * una función que pueda reconocer en estas palabras un token válido (que será
@@ -67,34 +66,35 @@ char **infix_split(const char *linea);
  * es, si es un número o un operador; y, caso de ser operador, cuál:
  */
 
-enum token_type {
-    TOK_NUM,     // Número
-    TOK_OPER,    // Operador
-    TOK_LPAREN,  // Paréntesis de apertura
-    TOK_RPAREN,  // Paréntesis de cierre
+enum token_type
+{
+    TOK_NUM,    // Número
+    TOK_OPER,   // Operador
+    TOK_LPAREN, // Paréntesis de apertura
+    TOK_RPAREN, // Paréntesis de cierre
 };
 
-
-enum oper_type {
-    OP_ADD,   // suma, +
-    OP_SUB,   // resta, -
-    OP_MUL,   // multiplicación, *
-    OP_DIV,   // división entera, /
-    OP_POW,   // potencia, ^
-    OP_LOG,   // logaritmo, "log"
-    OP_RAIZ,  // raíz cuadrada, "sqrt"
-    OP_TERN,  // operador ternario, ?:
+enum oper_type
+{
+    OP_ADD,  // suma, +
+    OP_SUB,  // resta, -
+    OP_MUL,  // multiplicación, *
+    OP_DIV,  // división entera, /
+    OP_POW,  // potencia, ^
+    OP_LOG,  // logaritmo, "log"
+    OP_RAIZ, // raíz cuadrada, "sqrt"
+    OP_TERN, // operador ternario, ?:
 };
-
 
 /* El tipo del valor numérico será "long int", que codificamos con un typedef.
  * También usamos un struct para definir los operadores y sus atributos.
  *
  */
 
-typedef int64_t calc_num;  // Para tokens TOK_NUM
+typedef int64_t calc_num; // Para tokens TOK_NUM
 
-typedef struct calc_oper {  // Para tokens TOK_OPER
+typedef struct calc_oper
+{ // Para tokens TOK_OPER
     enum oper_type op;
     // AYUDA: la implementación de dc puede simplificarse en ciertos aspectos si
     // el struct que representa un operador incluye el número de operandos que
@@ -112,7 +112,6 @@ typedef struct calc_oper {  // Para tokens TOK_OPER
      * enum assoc asociatividad;  // p.ej. ASSOC_LEFT, ASSOC_RIGHT (a definir).
      */
 } calc_operador;
-
 
 /*
  * Finalmente, combinamos ambos en la representación del tipo + valor (de esta
@@ -139,24 +138,24 @@ typedef struct calc_oper {  // Para tokens TOK_OPER
  *     }
  */
 
-struct calc_token {
+struct calc_token
+{
     enum token_type type;
-    union {
-        calc_num value;      // Si "type" es TOK_NUM
-        calc_operador oper;  // Si "type" es TOK_OPER
+    union
+    {
+        calc_num value;     // Si "type" es TOK_NUM
+        calc_operador oper; // Si "type" es TOK_OPER
     };
 };
 
-
 /*
- * La función calc_parse() recibe una token, y devuelve verdadero si es válido,
+ * La función calc_parse() recibe un token, y devuelve verdadero si es válido,
  * y falso en caso contrario. Támbien devuelve, vía el parámetro de salida
  * "parsed_token", el valor del token en sí. (En general, siempre conviene
  * tener la verificación y la conversión juntas, para que nunca diverjan.)
  */
 
 bool calc_parse(const char *tok_str, struct calc_token *parsed_token);
-
 
 /*
  * La pila_t de que disponemos es una pila de punteros, pero es mucho más
@@ -173,13 +172,11 @@ typedef pila_t pilanum_t;
 pilanum_t *pilanum_crear(void);
 void pilanum_destruir(pilanum_t *pila);
 
-
 /*
  * Primitiva de pilanum_t para apilar un número (usa internamente memoria dinámica,
  * liberada por supuesto en pilanum_destruir).
  */
 void apilar_num(pilanum_t *pila, calc_num num);
-
 
 /*
  * Y ahora, la función que permite desapilarlo, liberando la memoria reservada.
