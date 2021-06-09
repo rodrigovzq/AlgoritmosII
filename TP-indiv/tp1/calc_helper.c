@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 200809L
 #include "calc_helper.h"
 
 #include "strutil.h"
@@ -9,12 +10,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 //
 // Prototipos de funciones internas a calc_helper.c
 //
 static bool parse_num(const char *tok, calc_num *dest);
-
 
 //
 // Convierte palabra a struct calc_token (número, operador, o paréntesis).
@@ -26,68 +25,85 @@ static bool parse_num(const char *tok, calc_num *dest);
 // Returns:
 //    verdadero si la palabra formaba un token válido, falso en caso contrario
 //
-bool calc_parse(const char *tok, struct calc_token *parsed) {
-    if (parse_num(tok, &parsed->value)) {
+bool calc_parse(const char *tok, struct calc_token *parsed)
+{
+    if (parse_num(tok, &parsed->value))
+    {
         parsed->type = TOK_NUM;
         return true;
     }
-    else {
+    else
+    {
         parsed->type = TOK_OPER;
     }
 
-    if (strlen(tok) == 1) {
+    if (strlen(tok) == 1)
+    {
         char op = tok[0];
-        if (op == '+') {
+        if (op == '+')
+        {
             parsed->oper.op = OP_ADD;
         }
-        else if (op == '-') {
+        else if (op == '-')
+        {
             parsed->oper.op = OP_SUB;
         }
-        else if (op == '*') {
+        else if (op == '*')
+        {
             parsed->oper.op = OP_MUL;
         }
-        else if (op == '/') {
+        else if (op == '/')
+        {
             parsed->oper.op = OP_DIV;
         }
-        else if (op == '^') {
+        else if (op == '^')
+        {
             parsed->oper.op = OP_POW;
         }
-        else if (op == '?') {
+        else if (op == '?')
+        {
             parsed->oper.op = OP_TERN;
         }
-        else if (op == '(') {
+        else if (op == '(')
+        {
             parsed->type = TOK_LPAREN;
         }
-        else if (op == ')') {
+        else if (op == ')')
+        {
             parsed->type = TOK_RPAREN;
         }
-        else {
+        else
+        {
             return false;
         }
     }
-    else if (strcmp(tok, "log") == 0) {
+    else if (strcmp(tok, "log") == 0)
+    {
         parsed->oper.op = OP_LOG;
     }
-    else if (strcmp(tok, "sqrt") == 0) {
+    else if (strcmp(tok, "sqrt") == 0)
+    {
         parsed->oper.op = OP_RAIZ;
     }
-    else {
+    else
+    {
         return false;
     }
 
     return true;
 }
 
-
 //
 // Primitivas de pilaint_t.
 //
 
-pilanum_t *pilanum_crear(void) {
+pilanum_t *pilanum_crear(void)
+{
     return pila_crear();
 }
 
-void apilar_num(pilanum_t *pila, calc_num num) {
+void apilar_num(pilanum_t *pila, calc_num num)
+{
     calc_num *dyn;
     // Por comodidad, queremos que apilar_num() sea void. Añadimos
     // sendos asserts para que, si ocurriese que malloc() falla, fuera
@@ -97,8 +113,8 @@ void apilar_num(pilanum_t *pila, calc_num num) {
     assert(pila_apilar(pila, dyn));
 }
 
-
-bool desapilar_num(pilanum_t *pila, calc_num *num) {
+bool desapilar_num(pilanum_t *pila, calc_num *num)
+{
     if (pila_esta_vacia(pila))
         return false;
 
@@ -108,16 +124,16 @@ bool desapilar_num(pilanum_t *pila, calc_num *num) {
     return true;
 }
 
-
-void pilanum_destruir(pilanum_t *pila) {
-    while (!pila_esta_vacia(pila)) {
+void pilanum_destruir(pilanum_t *pila)
+{
+    while (!pila_esta_vacia(pila))
+    {
         void *elem = pila_desapilar(pila);
         free(elem);
     }
 
     pila_destruir(pila);
 }
-
 
 //
 // Implementaciones de dc_split e infix_split.
@@ -127,14 +143,16 @@ void pilanum_destruir(pilanum_t *pila) {
 // tenía tokens, se devuelve un arreglo de longitud cero: {NULL}.
 //
 
-char **dc_split(const char *linea) {
+char **dc_split(const char *linea)
+{
     const char *delim = " \n";
-    char *parse = strdup(linea);  // No modificar línea, que es const.
+    char *parse = strdup(linea); // No modificar línea, que es const.
     char *ptr, *tok = strtok_r(parse, delim, &ptr);
-    char **strv = calloc(strlen(linea) + 1, sizeof(char *));  // (¹)
+    char **strv = calloc(strlen(linea) + 1, sizeof(char *)); // (¹)
 
     // Separa por espacios (o múltiples espacios), e ignorando saltos de línea.
-    for (size_t i = 0; tok != NULL; tok = strtok_r(NULL, delim, &ptr), i++) {
+    for (size_t i = 0; tok != NULL; tok = strtok_r(NULL, delim, &ptr), i++)
+    {
         strv[i] = strdup(tok);
     }
 
@@ -142,27 +160,31 @@ char **dc_split(const char *linea) {
     return strv;
 }
 
-
-char **infix_split(const char *linea) {
+char **infix_split(const char *linea)
+{
     size_t i = 0;
     const char *s = linea;
-    char **strv = calloc(strlen(linea) + 1, sizeof(char *));  // (¹)
+    char **strv = calloc(strlen(linea) + 1, sizeof(char *)); // (¹)
 
     // Implementa lo especificado en la consigna: solamente números positivos,
     // y garantía de input siempre válido. Por tanto, es como un split en la
     // barrera dígito/no-espacio.
-    while (*s != '\0') {
+    while (*s != '\0')
+    {
         size_t n = 1;
 
-        while (isspace(*s)) {
+        while (isspace(*s))
+        {
             s++;
         }
 
-        if (isdigit(*s)) {
+        if (isdigit(*s))
+        {
             n = strspn(s, "0123456789");
         }
 
-        if (*s) {
+        if (*s)
+        {
             strv[i++] = strndup(s, n);
             s += n;
         }
@@ -170,7 +192,6 @@ char **infix_split(const char *linea) {
 
     return strv;
 }
-
 
 /** Notas al pie.
  *
@@ -199,7 +220,6 @@ char **infix_split(const char *linea) {
  *    srtv[i] = strdup(tok);
  */
 
-
 //
 // Convierte una cadena a entero, indicando si se pudo.
 //
@@ -210,7 +230,8 @@ char **infix_split(const char *linea) {
 // Returns:
 //    verdadero si la cadena era en su totalidad un entero válido.
 //
-static bool parse_num(const char *tok, calc_num *dest) {
+static bool parse_num(const char *tok, calc_num *dest)
+{
     char *end;
     *dest = strtol(tok, &end, 10);
     return *end == '\0';

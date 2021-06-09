@@ -1,9 +1,9 @@
+#define _POSIX_C_SOURCE 200809L
 #include "strutil.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #define EOS '\0'
-#define _POSIX_C_SOURCE 200809L
 
 char *substr(const char *str, size_t n)
 {

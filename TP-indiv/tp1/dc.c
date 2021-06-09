@@ -4,16 +4,18 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <math.h>
+#include <inttypes.h>
 #include "strutil.h"
 #include "pila.h"
 #include "calc_helper.h"
 
 #define MAX_LINE_SIZE 32
 #define MSG_ERR "ERROR"
+#define ERR_NO_MEMORY "Memoria insuficiente\n"
 
 bool get_line(char *line, FILE *file);
-bool parse_line(char **level, pilanum_t *stack, char **operators);
-bool compute_line(pilanum_t *stack, char **operators);
+bool compute_line(char **level, pilanum_t *stack);
+bool compute(pilanum_t *stack, char *operator);
 int main(void)
 {
 
@@ -23,34 +25,31 @@ int main(void)
     FILE *fo = stdout;
     calc_num result;
     pilanum_t *stack = pilanum_crear();
-    //if (stack == NULL)
-    //    return 1; //TODO: poner error
-    //int i = 1;
+    if (stack == NULL)
+    {
+        fprintf(stderr, ERR_NO_MEMORY);
+        return 1; //TODO: poner error
+    }
     while (get_line(line, fi))
     {
         char **line_data = malloc(sizeof(char *) * MAX_LINE_SIZE);
-        line_data = dc_split(line);
-        char **operators = malloc(sizeof(char *) * MAX_LINE_SIZE);
-        // lee linea, llena stack con operandos y arreglo con operadores
-        parse_line(line_data, stack, operators);
 
-        // el stack queda completo con los resultados
+        line_data = dc_split(line); //pide memeoria
 
-        if (compute_line(stack, operators))
+        if (compute_line(line_data, stack))
         {
             desapilar_num(stack, &result);
-            fprintf(fo, "%lli\n", result);
+            fprintf(fo, "%" PRId64 "\n", result);
         }
         else
         {
             fprintf(fo, "%s\n", MSG_ERR);
         }
-        //free(line);
+
         free_strv(line_data);
-        //printf("cul\n");
-        free_strv(operators);
     }
     pila_destruir(stack);
+    free(line);
     return 0;
 }
 
@@ -59,13 +58,14 @@ bool get_line(char *line, FILE *file)
     return fgets(line, MAX_LINE_SIZE, file) != NULL;
 }
 
-bool parse_line(char **level, pilanum_t *stack, char **operators)
+bool compute_line(char **level, pilanum_t *stack)
 {
 
     struct calc_token tok;
-    size_t i = 0, j = 0;
+    size_t i = 0;
+    bool ok = true;
 
-    while (level[i] != NULL) // -> revisar condicion de paro
+    while (level[i] != NULL && ok == true) // -> revisar condicion de paro
     {
 
         if (!calc_parse(level[i], &tok))
@@ -79,118 +79,109 @@ bool parse_line(char **level, pilanum_t *stack, char **operators)
 
         if (tok.type == TOK_OPER)
         {
-            operators[j] = calloc(4, sizeof(char));
-            strcpy(operators[j++], level[i]);
-            //printf("%s\n", operators[j - 1]);
+            ok &= compute(stack, level[i]);
         }
         i++;
     }
 
-    operators[j] = NULL;
-    return true;
+    return ok;
 }
 
-bool compute_line(pilanum_t *stack, char **operators)
+bool compute(pilanum_t *stack, char *operator)
 {
 
-    size_t i = 0;
     calc_num x, y, z;
 
-    while (operators[i] != NULL)
+    if (strcmp(operator, "+") == 0)
     {
 
-        if (strcmp(operators[i], "+") == 0)
+        if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
         {
-
-            if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
-            {
-                apilar_num(stack, y + x);
-            }
-            else
-                return false;
+            apilar_num(stack, y + x);
         }
-        else if (strcmp(operators[i], "-") == 0)
+        else
+            return false;
+    }
+    else if (strcmp(operator, "-") == 0)
+    {
+        if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
         {
-            if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
-            {
-                apilar_num(stack, y - x);
-            }
-            else
-                return false;
+            apilar_num(stack, y - x);
         }
-        else if (strcmp(operators[i], "*") == 0)
+        else
+            return false;
+    }
+    else if (strcmp(operator, "*") == 0)
+    {
+        if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
         {
-            if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
-            {
-                apilar_num(stack, y * x);
-            }
-            else
-                return false;
+            apilar_num(stack, y * x);
         }
-        else if (strcmp(operators[i], "/") == 0)
+        else
+            return false;
+    }
+    else if (strcmp(operator, "/") == 0)
+    {
+        if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
         {
-            if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
+            if (x != 0)
             {
-                if (x != 0)
-                {
-                    apilar_num(stack, y / x);
-                }
-                else
-                    return false;
-            }
-            else
-                return false;
-        }
-        else if (strcmp(operators[i], "^") == 0)
-        {
-            if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
-            {
-                apilar_num(stack, (calc_num)pow(y, x));
-            }
-            else
-                return false;
-        }
-        else if (strcmp(operators[i], "sqrt") == 0)
-        {
-            if (desapilar_num(stack, &x))
-            {
-                if (x > 0)
-                {
-                    apilar_num(stack, (calc_num)sqrt(x));
-                }
-                else
-                    return false;
-            }
-        }
-        else if (strcmp(operators[i], "log") == 0)
-        {
-            if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
-            {
-                if (x >= 2)
-                {
-                    apilar_num(stack, (calc_num)(log(y) / log(x)));
-                }
-                else
-                    return false;
-            }
-            else
-                return false;
-        }
-        else if (strcmp(operators[i], "?") == 0)
-        {
-            if (desapilar_num(stack, &x) && desapilar_num(stack, &y) && desapilar_num(stack, &z))
-            {
-                apilar_num(stack, (z) ? y : x);
+                apilar_num(stack, y / x);
             }
             else
                 return false;
         }
         else
-        {
-
             return false;
+    }
+    else if (strcmp(operator, "^") == 0)
+    {
+        if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
+        {
+            apilar_num(stack, (calc_num)pow((double)y, (double)x));
         }
-        i++;
+        else
+            return false;
+    }
+    else if (strcmp(operator, "sqrt") == 0)
+    {
+        if (desapilar_num(stack, &x))
+        {
+            if (x > 0)
+            {
+                apilar_num(stack, (calc_num)sqrt((double)x));
+            }
+            else
+                return false;
+        }
+    }
+    else if (strcmp(operator, "log") == 0)
+    {
+        if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
+        {
+            if (x >= 2)
+            {
+                apilar_num(stack, (calc_num)(log((double)y) / log((double)x)));
+            }
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+    else if (strcmp(operator, "?") == 0)
+    {
+        if (desapilar_num(stack, &x) && desapilar_num(stack, &y) && desapilar_num(stack, &z))
+        {
+            apilar_num(stack, (z) ? y : x);
+        }
+        else
+            return false;
+    }
+    else
+    {
+
+        return false;
     }
 
     return true;
