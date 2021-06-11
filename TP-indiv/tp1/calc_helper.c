@@ -43,22 +43,32 @@ bool calc_parse(const char *tok, struct calc_token *parsed)
         if (op == '+')
         {
             parsed->oper.op = OP_ADD;
+            parsed->oper.precedencia = 1;
+            parsed->oper.left_asoc = true;
         }
         else if (op == '-')
         {
             parsed->oper.op = OP_SUB;
+            parsed->oper.precedencia = 2;
+            parsed->oper.left_asoc = true;
         }
         else if (op == '*')
         {
             parsed->oper.op = OP_MUL;
+            parsed->oper.precedencia = 3;
+            parsed->oper.left_asoc = true;
         }
         else if (op == '/')
         {
             parsed->oper.op = OP_DIV;
+            parsed->oper.precedencia = 4;
+            parsed->oper.left_asoc = true;
         }
         else if (op == '^')
         {
             parsed->oper.op = OP_POW;
+            parsed->oper.precedencia = 5;
+            parsed->oper.left_asoc = false;
         }
         else if (op == '?')
         {
@@ -67,10 +77,12 @@ bool calc_parse(const char *tok, struct calc_token *parsed)
         else if (op == '(')
         {
             parsed->type = TOK_LPAREN;
+            parsed->oper.precedencia = 0;
         }
         else if (op == ')')
         {
             parsed->type = TOK_RPAREN;
+            parsed->oper.precedencia = 0;
         }
         else
         {

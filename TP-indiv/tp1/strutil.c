@@ -46,19 +46,33 @@ char *join(char **strv, char sep)
 
     size_t total_size = 0;
     size_t cant_str = 0;
+    char *end;
+    char sep_str[2] = {sep, EOS};
     for (size_t i = 0; strv[i] != NULL; i++)
     {
-        total_size = total_size + strlen(strv[i]);
+        total_size = total_size + strlen(strv[i]) + 1;
         cant_str++;
     }
 
-    char *string = calloc((total_size + cant_str), sizeof(char));
-
-    for (size_t i = 0; i < cant_str; i++)
+    char *string = calloc((1 + total_size + cant_str), sizeof(char));
+    if (!string)
+        return NULL;
+    //string[0] = EOS; //para que ande stp en el principio
+    end = string;
+    size_t i = 0;
+    while (i < cant_str)
     {
+        if (i > 0)
+            end = stpcpy(end, sep_str);
+
+        end = stpcpy(end, strv[i]);
+
+        i++;
+        /* es lento
         strcat(string, strv[i]);
         if (i < cant_str - 1)
             strncat(string, &sep, 1);
+        */
     }
 
     return string;

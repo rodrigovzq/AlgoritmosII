@@ -80,7 +80,7 @@ void pruebas_join(void)
 
 void pruebas_string_estudiante(void)
 {
-    pruebas_split();
+    //pruebas_split();
     pruebas_join();
 
     return;

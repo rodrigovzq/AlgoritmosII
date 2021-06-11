@@ -138,7 +138,7 @@ bool compute(pilanum_t *stack, char *operator)
     {
         if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
         {
-            apilar_num(stack, (calc_num)pow((double)y, (double)x));
+            apilar_num(stack, pow((double)y, (double)x));
         }
         else
             return false;
@@ -149,7 +149,7 @@ bool compute(pilanum_t *stack, char *operator)
         {
             if (x > 0)
             {
-                apilar_num(stack, (calc_num)sqrt((double)x));
+                apilar_num(stack, sqrt((double)x));
             }
             else
                 return false;
@@ -159,9 +159,9 @@ bool compute(pilanum_t *stack, char *operator)
     {
         if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
         {
-            if (x >= 2)
+            if (x >= 0)
             {
-                apilar_num(stack, (calc_num)(log((double)y) / log((double)x)));
+                apilar_num(stack, (log((double)y) / log((double)x)));
             }
             else
                 return false;

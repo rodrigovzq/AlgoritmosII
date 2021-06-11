@@ -108,9 +108,10 @@ typedef struct calc_oper
     // mismo struct del operador incluye también su precedencia y asociatividad,
     // para comparar los atributos del token actual con los del tope de la pila:
     /**
-     * unsigned precedencia;
      * enum assoc asociatividad;  // p.ej. ASSOC_LEFT, ASSOC_RIGHT (a definir).
      */
+    unsigned precedencia;
+    bool left_asoc;
 } calc_operador;
 
 /*
