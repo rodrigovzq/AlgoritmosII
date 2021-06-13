@@ -44,31 +44,26 @@ bool calc_parse(const char *tok, struct calc_token *parsed)
         {
             parsed->oper.op = OP_ADD;
             parsed->oper.precedencia = 1;
-            parsed->oper.left_asoc = true;
         }
         else if (op == '-')
         {
             parsed->oper.op = OP_SUB;
-            parsed->oper.precedencia = 2;
-            parsed->oper.left_asoc = true;
+            parsed->oper.precedencia = 1;
         }
         else if (op == '*')
         {
             parsed->oper.op = OP_MUL;
             parsed->oper.precedencia = 3;
-            parsed->oper.left_asoc = true;
         }
         else if (op == '/')
         {
             parsed->oper.op = OP_DIV;
-            parsed->oper.precedencia = 4;
-            parsed->oper.left_asoc = true;
+            parsed->oper.precedencia = 3;
         }
         else if (op == '^')
         {
             parsed->oper.op = OP_POW;
             parsed->oper.precedencia = 5;
-            parsed->oper.left_asoc = false;
         }
         else if (op == '?')
         {

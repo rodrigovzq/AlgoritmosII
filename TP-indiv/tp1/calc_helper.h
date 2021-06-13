@@ -111,7 +111,6 @@ typedef struct calc_oper
      * enum assoc asociatividad;  // p.ej. ASSOC_LEFT, ASSOC_RIGHT (a definir).
      */
     unsigned precedencia;
-    bool left_asoc;
 } calc_operador;
 
 /*

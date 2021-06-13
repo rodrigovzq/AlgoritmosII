@@ -34,7 +34,8 @@ infix: clean helper.o strutil.o pila.o cola.o
 	$(CC) $(CFLAGS)  -o infix infix.c helper.o strutil.o pila.o cola.o 
 	./infix < arith.txt
 dc:  clean helper.o strutil.o  pila.o 
-	$(CC) $(CFLAGS)  -o dc dc.c helper.o strutil.o pila.o $(LFLAGS)
+
+	$(CC) -g -std=c11 -Wconversion -Wtype-limits    -o dc dc.c helper.o strutil.o pila.o $(LFLAGS)
 	./dc < rpn.txt
 pila.o: pila.c pila.h
 	$(CC) $(CFLAGS) -o pila.o -c pila.c

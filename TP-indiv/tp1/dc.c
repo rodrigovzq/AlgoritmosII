@@ -16,45 +16,79 @@
 bool get_line(char *line, FILE *file);
 bool compute_line(char **level, pilanum_t *stack);
 bool compute(pilanum_t *stack, char *operator);
+bool read_line(char **line, FILE *file);
 int main(void)
 {
 
     char *line = malloc(sizeof(char) * MAX_LINE_SIZE);
-
+    //char *line = NULL;
     FILE *fi = stdin;
     FILE *fo = stdout;
     calc_num result;
-    pilanum_t *stack = pilanum_crear();
-    if (stack == NULL)
-    {
-        fprintf(stderr, ERR_NO_MEMORY);
-        return 1; //TODO: poner error
-    }
     while (get_line(line, fi))
     {
-        char **line_data = malloc(sizeof(char *) * MAX_LINE_SIZE);
-
-        line_data = dc_split(line); //pide memeoria
-
-        if (compute_line(line_data, stack))
+        pilanum_t *stack = pilanum_crear();
+        if (stack == NULL)
         {
-            desapilar_num(stack, &result);
-            fprintf(fo, "%" PRId64 "\n", result);
+            fprintf(stderr, ERR_NO_MEMORY);
+            return 1;
         }
-        else
-        {
-            fprintf(fo, "%s\n", MSG_ERR);
-        }
+        if (strtok(line, "\n"))
 
-        free_strv(line_data);
+        {
+            char **line_data = malloc(sizeof(char *) * MAX_LINE_SIZE);
+
+            line_data = dc_split(line); //pide memeoria
+
+            if (compute_line(line_data, stack))
+            {
+                desapilar_num(stack, &result);
+                if (pila_esta_vacia(stack))
+                {
+                    fprintf(fo, "%" PRId64 "\n", result);
+                }
+                else
+                {
+                    fprintf(fo, "%s\n", MSG_ERR);
+                    pila_destruir(stack);
+                    stack = pilanum_crear();
+                }
+            }
+            else
+            {
+                fprintf(fo, "%s \n", MSG_ERR);
+                pila_destruir(stack);
+                stack = pilanum_crear();
+            }
+
+            free_strv(line_data);
+        }
+        pila_destruir(stack);
     }
-    pila_destruir(stack);
     free(line);
     return 0;
 }
-
+bool read_line(char **line, FILE *file)
+{
+    char *aux;
+    size_t len = 0;
+    size_t read;
+    read = getline(&aux, &len, file);
+    if (read < 0)
+    {
+        return false;
+    }
+    if (aux[read - 1] == '\n')
+    {
+        aux[read - 1] = '\0';
+        return true;
+    }
+    *line = aux;
+    return true;
+}
 bool get_line(char *line, FILE *file)
 {
+
     return fgets(line, MAX_LINE_SIZE, file) != NULL;
 }
 
@@ -65,10 +99,10 @@ bool compute_line(char **level, pilanum_t *stack)
     size_t i = 0;
     bool ok = true;
 
-    while (level[i] != NULL && ok == true) // -> revisar condicion de paro
+    while (level[i] != NULL && ok == true)
     {
 
-        if (!calc_parse(level[i], &tok))
+        if (strcmp(level[i], "\n") != 0 && !calc_parse(level[i], &tok))
         {
             return false;
         }
@@ -80,6 +114,8 @@ bool compute_line(char **level, pilanum_t *stack)
         if (tok.type == TOK_OPER)
         {
             ok &= compute(stack, level[i]);
+            if (!ok)
+                return ok;
         }
         i++;
     }
@@ -147,7 +183,7 @@ bool compute(pilanum_t *stack, char *operator)
     {
         if (desapilar_num(stack, &x))
         {
-            if (x > 0)
+            if (x >= 0)
             {
                 apilar_num(stack, sqrt((double)x));
             }
@@ -159,7 +195,7 @@ bool compute(pilanum_t *stack, char *operator)
     {
         if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
         {
-            if (x >= 0)
+            if (x >= 2)
             {
                 apilar_num(stack, (log((double)y) / log((double)x)));
             }
