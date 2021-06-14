@@ -9,7 +9,7 @@
 #include "pila.h"
 #include "calc_helper.h"
 
-#define MAX_LINE_SIZE 32
+#define MAX_LINE_SIZE 1000
 #define MSG_ERR "ERROR"
 #define ERR_NO_MEMORY "Memoria insuficiente\n"
 
@@ -21,71 +21,52 @@ int main(void)
 {
 
     char *line = malloc(sizeof(char) * MAX_LINE_SIZE);
-    //char *line = NULL;
     FILE *fi = stdin;
     FILE *fo = stdout;
-    calc_num result;
+    calc_num result, t;
     while (get_line(line, fi))
     {
+        if (line[0] == '\n')
+        {
+            continue;
+        }
+        line[strlen(line) - 1] = '\0';
+
         pilanum_t *stack = pilanum_crear();
         if (stack == NULL)
         {
-            fprintf(stderr, ERR_NO_MEMORY);
+            fprintf(fo, ERR_NO_MEMORY);
             return 1;
         }
-        if (strtok(line, "\n"))
+        char **line_data = malloc(sizeof(char *) * MAX_LINE_SIZE);
 
+        line_data = dc_split(line); //pide memeoria
+
+        if (compute_line(line_data, stack))
         {
-            char **line_data = malloc(sizeof(char *) * MAX_LINE_SIZE);
-
-            line_data = dc_split(line); //pide memeoria
-
-            if (compute_line(line_data, stack))
+            desapilar_num(stack, &result);
+            if (pila_esta_vacia(stack))
             {
-                desapilar_num(stack, &result);
-                if (pila_esta_vacia(stack))
-                {
-                    fprintf(fo, "%" PRId64 "\n", result);
-                }
-                else
-                {
-                    fprintf(fo, "%s\n", MSG_ERR);
-                    pila_destruir(stack);
-                    stack = pilanum_crear();
-                }
+                fprintf(fo, "%" PRId64 "\n", result);
             }
             else
             {
-                fprintf(fo, "%s \n", MSG_ERR);
-                pila_destruir(stack);
-                stack = pilanum_crear();
+                fprintf(fo, "%s\n", MSG_ERR);
             }
-
-            free_strv(line_data);
         }
+        else
+        {
+            fprintf(fo, "%s \n", MSG_ERR);
+        }
+        free_strv(line_data);
+        while (!pila_esta_vacia(stack))
+            desapilar_num(stack, &t);
         pila_destruir(stack);
     }
     free(line);
     return 0;
 }
-bool read_line(char **line, FILE *file)
-{
-    char *aux;
-    size_t len = 0;
-    size_t read;
-    read = getline(&aux, &len, file);
-    if (read < 0)
-    {
-        return false;
-    }
-    if (aux[read - 1] == '\n')
-    {
-        aux[read - 1] = '\0';
-        return true;
-    }
-    *line = aux;
-    return true;
-}
+
 bool get_line(char *line, FILE *file)
 {
 
@@ -115,11 +96,12 @@ bool compute_line(char **level, pilanum_t *stack)
         {
             ok &= compute(stack, level[i]);
             if (!ok)
-                return ok;
+                return false;
         }
         i++;
     }
-
+    if (level[i] != NULL)
+        return false;
     return ok;
 }
 
@@ -174,7 +156,12 @@ bool compute(pilanum_t *stack, char *operator)
     {
         if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
         {
-            apilar_num(stack, pow((double)y, (double)x));
+            if (x >= 0)
+            {
+                apilar_num(stack, pow((double)y, (double)x));
+            }
+            else
+                return false;
         }
         else
             return false;
@@ -190,12 +177,14 @@ bool compute(pilanum_t *stack, char *operator)
             else
                 return false;
         }
+        else
+            return false;
     }
     else if (strcmp(operator, "log") == 0)
     {
         if (desapilar_num(stack, &x) && desapilar_num(stack, &y))
         {
-            if (x >= 2)
+            if (x > 0 && x != 1)
             {
                 apilar_num(stack, (log((double)y) / log((double)x)));
             }

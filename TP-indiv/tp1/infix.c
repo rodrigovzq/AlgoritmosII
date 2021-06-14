@@ -10,7 +10,6 @@
 
 #define MAX_LINE_SIZE 100000
 #define MSG_ERR "ERROR"
-//#define EOF '\0'
 
 bool get_line(char *line, FILE *file);
 bool process_line(char **level, cola_t *queue);
