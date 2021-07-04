@@ -1,0 +1,14 @@
+# Taller preparcial 3
+
+[x] Seguimiento heapsort , o(nlogn)
+[] bool es_heap(int arr[], size_t n) si arreglo es heap.
+    [] seguimiento, orden
+[] grafo no conexo para orden topo
+    []  escribir 2 ordenes
+    [] matriz de incidencia
+    [] matriz de adyacencia
+    [] lista de adyacencia
+[] funcion bool tiene_ciclo(grafo) si tiene ciclo
+    [] orden? por que?
+[] funcion bool es_bipartito(grafo) si es bipartito.
+    [] tipo de recorrido
