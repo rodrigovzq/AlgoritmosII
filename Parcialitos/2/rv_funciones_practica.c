@@ -128,3 +128,4 @@ lista_t *obtener_claves(abb_t *arbol)
 
 // 1- calcular el rango rg{entre el minimo y el maximo}
 // 2-  Crear un arreglo nuevo que tenga max-min elementos
+// Lo hice en Notability
