@@ -16,7 +16,7 @@ int cmp_int(const void *a, const void *b)
 int main(void)
 {
 
-    int a = 1, b = 8, c = 5, d = 2, e = 5, f = 7, g = 6;
+    int a = 8, b = 2, c = 1, d = 5, e = 10, f = 6, g = 14;
     void *arr[] = {&a, &b, &c, &d, &e, &f, &g};
     for (int i = 0; i < 7; i++)
         printf("%i ", *(int *)arr[i]);
